@@ -21,17 +21,22 @@ const pool = mysql.createPool(config);
 const query = (sql) => {
     return new Promise((res, rej) => {
         pool.getConnection((err, connection) => {
-            connection.query(sql, (err, rows) => {
-                if (err) {
-                    rej(err);
-                } else {
-                    res(rows);
-                }
-                connection.release();
-            });
+            if (err) {
+                console.log(err);
+            } else {
+                connection.query(sql, (err, rows) => {
+                    if (err) {
+                        rej(err);
+                    } else {
+                        res(rows);
+                    }
+                    connection.release();
+                });
+            }
         });
     });
 }
 
 exports.query = query;
 exports.userTable = 'users';
+exports.roomTable = 'rooms';

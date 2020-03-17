@@ -26,23 +26,23 @@ const responseInfo = {
 	msg: 'success',
 	status: 200
 };
-const responseRegisted = {
-	data: null,
-	msg: '该用户名已被注册',
-	status: 400
-}
 const responseErr = {
 	data: null,
 	msg: '出错了',
 	status: 500
-}
+};
+const responseRegisted = {
+	data: null,
+	msg: '该用户名已被注册',
+	status: 400
+};
 /* GET users listing. */
 function getToken(id) {
 	const jwt = new JwtUtil(id);
 	return jwt.generateToken();
 }
 function getUserFromTable(name) {
-	const sql = `select * from ${db.userTable} where name = ${name}`;
+	const sql = `select * from ${db.userTable} where name = '${name}'`;
 	return db.query(sql).then(res => JSON.parse(JSON.stringify(res)));
 }
 function doRegiste({ name, password }) {
@@ -51,12 +51,13 @@ function doRegiste({ name, password }) {
 		db.query(sql).then(res => {
 			const id = res[0].count + 1;
 			const token = getToken(id);
-			const insert = `insert into ${db.userTable} (name, password, id, token) values(${name}, ${password}, ${id}, '${token}')`;
+			const insert = `insert into ${db.userTable} (name, password, id, token) values('${name}', '${password}', ${id}, '${token}')`;
 			db.query(insert).then(rows => {
 				// 注册成功
 				resolve({
 					name,
 					id,
+					score: 0,
 					token
 				});
 			}).catch(err => rej(err));
@@ -69,7 +70,6 @@ function doLogin({ name, password }) {
 		if (password === info.password) {
 			// 登录成功
 			const item = info;
-			item.token = getToken(item.id);
 			return item;
 		} else {
 			return null;

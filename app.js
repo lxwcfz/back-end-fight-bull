@@ -6,7 +6,10 @@ var logger = require('morgan');
 const JwtUtil = require('./config/jwt');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+const roomRoute = require('./routes/room');
+const getWs = require('./config/ws');
 
+getWs();
 var app = express();
 
 // view engine setup
@@ -30,6 +33,7 @@ app.all('*', (req, res, next) => {
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/room', roomRoute)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -16,7 +16,8 @@ class Jwt {
         let cert = fs.readFileSync(path.join(__dirname, '../pem/rsa_private_key.pem'));//私钥 可以自己生成
         let token = jwt.sign({
             data,
-            exp: created + 60 * 60 * 24 * 3,
+            exp: created + 60 * 60 * 24 * 1,    // 1day
+            // exp: created + 60,  // 60s
         }, cert, {algorithm: 'RS256'});
         return token;
     }
@@ -28,9 +29,11 @@ class Jwt {
         let res;
         try {
             let result = jwt.verify(token, cert, {algorithms: ['RS256']}) || {};
-            let {exp = 0} = result, current = Math.floor(Date.now() / 1000);
+            let { exp } = result, current = Math.floor(Date.now() / 1000);
             if (current <= exp) {
                 res = result.data || {};
+            } else {
+                res = 'err';
             }
         } catch (e) {
             res = 'err';

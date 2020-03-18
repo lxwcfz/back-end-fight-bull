@@ -70,7 +70,12 @@ function doLogin({ name, password }) {
 		if (password === info.password) {
 			// 登录成功
 			const item = info;
-			return item;
+			const token = getToken(item.id);
+			item.token = token;
+			const sql = `update ${db.userTable} set token='${token}' where id = ${item.id}`;
+			return db.query(sql).then(res => {
+				return item;
+			}).catch(() => null);
 		} else {
 			return null;
 		}

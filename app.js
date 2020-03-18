@@ -26,36 +26,37 @@ app.all('*', (req, res, next) => {
   res.header("Access-Control-Allow-Origin","*");
   //允许的header类型
   res.header("Access-Control-Allow-Headers","content-type, token");
-  //跨域允许的请求方式 
+  //跨域允许的请求方式
   res.header("Access-Control-Allow-Methods","DELETE,PUT,POST,GET,OPTIONS");
   next();
+});
+// token拦截检测
+app.use(function (req, res, next) {
+  // 我这里把登陆和注册请求去掉了，其他的多有请求都需要进行token校验
+  if (req.url != '/users/login') {
+    let token = req.headers.token;
+    let jwt = new JwtUtil(token);
+    let result = jwt.verifyToken();
+    // 如果考验通过就next，否则就返回登陆信息不正确
+    if (result == 'err') {
+      res.json({status: 403, msg: '登录已过期,请重新登录'});
+      // res.render('login.html');
+    } else {
+      next();
+    }
+  } else {
+    next();
+  }
 });
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('/room', roomRoute)
+app.use('/room', roomRoute);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
-});
-// token拦截检测
-app.use(function (req, res, next) {
-  // 我这里知识把登陆和注册请求去掉了，其他的多有请求都需要进行token校验 
-  if (req.url != '/users/login') {
-      let token = req.headers.token;
-      let jwt = new JwtUtil(token);
-      let result = jwt.verifyToken();
-      // 如果考验通过就next，否则就返回登陆信息不正确
-      if (result == 'err') {
-          res.json({status: 403, msg: '登录已过期,请重新登录'});
-          // res.render('login.html');
-      } else {
-          next();
-      }
-  } else {
-      next();
-  }
 });
 
 // error handler

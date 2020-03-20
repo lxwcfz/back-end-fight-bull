@@ -1,31 +1,32 @@
-const getToken = require('../getToken');
 const db = require('../db');
+const { getUserInfoByWs } = require('../info');
+const { WS_EVENT_TYPE } = require('../data');
+const {sendMsg} = require('../tool');
 
-module.exports = function handleNewRoom(data, ws) {
+module.exports = async function handleNewRoom(data, ws, server) {
 	const { name } = data;
-	const { path } = ws;
-	const token = getToken(path);
 	// 查询身份
-	const sql = `select * from ${db.userTable}`;
-	db.query(sql).then(res => {
-		const userInfo = JSON.parse(JSON.stringify(res))[0];
-		const sql1 = `select count(*) as count from ${db.roomTable}`;
-		// 获取房间数
-		db.query(sql1).then(res1 => {
-			const room = {
-				id: res1[0].count + 1,
-				name: name || `${userInfo.name}的房间`,
-				creator: JSON.stringify({ name: userInfo.name, id: userInfo.id })
-			};
-			const sql2 = `insert into ${db.roomTable} (id, name, creator) values(${room.id}, '${room.name}', '${room.creator}')`;
-			// 插入新房间
-			db.query(sql2).then(res2 => {
-				// 返回创建的房间
-				ws.sendText(JSON.stringify({
-					type: 0,
-					data: room
-				}));
-			});
+	const userInfo = await getUserInfoByWs(ws);
+	const room = {
+		name: name || `${userInfo.name}的房间`,
+		creator: JSON.stringify({name: userInfo.name, id: userInfo.id})
+	};
+	const sql = `insert into ${db.roomTable} (name, creator) values('${room.name}', '${room.creator}')`;
+	db.query(sql).then(res1 => {
+		// 插入新房间
+		const sql2 = `select * from ${db.roomTable} order by id desc limit 1`;
+		db.query(sql2).then(res2 => {
+			room.id = res2[0].id;
+			// 返回创建的房间
+			sendMsg(
+				server,
+				{
+					type: WS_EVENT_TYPE.newRoom,
+					data: {
+						data: room
+					}
+				}
+			)
 		});
 	});
 };

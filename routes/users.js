@@ -51,7 +51,7 @@ function doRegiste({ name, password }) {
 		db.query(sql).then(res => {
 			const id = res[0].count + 1;
 			const token = getToken(id);
-			const insert = `insert into ${db.userTable} (name, password, id, token) values('${name}', '${password}', ${id}, '${token}')`;
+			const insert = `insert into ${db.userTable} (name, password, token) values('${name}', '${password}', '${token}')`;
 			db.query(insert).then(rows => {
 				// 注册成功
 				resolve({

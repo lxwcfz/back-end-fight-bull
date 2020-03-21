@@ -3,10 +3,10 @@ const { getUserInfoByWs, getRoomInfoById } = require('../info');
 const { WS_EVENT_TYPE } = require('../data');
 const { getRandomCardNumber } = require('../card');
 
-module.exports = function handOutCard(roomId, ws) {
+module.exports = async function handOutCard(roomId, ws) {
 	let cards = []; // 已选牌
-	const roomInfo = getRoomInfoById(roomId);
-	const member = roomInfo.member;  // 房间内人员
+	const roomInfo = await getRoomInfoById(roomId);
+	const member = JSON.parse(roomInfo.member);  // 房间内人员
 
 	member.forEach(item => {
 		const { list, restCards } = getCard([], cards);

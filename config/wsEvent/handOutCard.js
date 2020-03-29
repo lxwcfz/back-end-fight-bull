@@ -2,8 +2,9 @@ const db = require('../db');
 const { getUserInfoByWs, getRoomInfoById } = require('../info');
 const { WS_EVENT_TYPE } = require('../data');
 const { getRandomCardNumber } = require('../card');
+const { sendMsg } = require('../tool');
 
-module.exports = async function handOutCard(roomId, ws) {
+module.exports = async function handOutCard(roomId, ws, server) {
 	let cards = []; // 已选牌
 	const roomInfo = await getRoomInfoById(roomId);
 	const member = JSON.parse(roomInfo.member);  // 房间内人员
@@ -14,12 +15,12 @@ module.exports = async function handOutCard(roomId, ws) {
 		cards = restCards;
 	});
 	// 选牌完毕
-	ws.sendText(JSON.stringify({
+	sendMsg(server, {
 		type: WS_EVENT_TYPE.handOutCard,
 		data: {
 			data: member
 		}
-	}));
+	});
 }
 function getCard(currentList, totalList) {
 	const newCard = getRandomCardNumber(totalList);

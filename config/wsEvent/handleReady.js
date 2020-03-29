@@ -36,7 +36,7 @@ module.exports = async function handleReady(data, ws, server) {
 			if (sec == 0) {
 				clearInterval(timer);
 				// 发牌
-				handOutCard(roomId, ws);
+				handOutCard(roomId, ws, server);
 			}
 			sec -= 1;
 		}, 1000);

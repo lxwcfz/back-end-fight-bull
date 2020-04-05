@@ -15,6 +15,9 @@ const WS_EVENT_TYPE = {
 	intoRoom: 3,  // 进入房间
 	outRoom: 4, // 离开房间
 	deleteRoom: 5,  // 删除房间
+	getHost: 6,
+	finish: 7,
+	again: 8
 };
 
 module.exports = {

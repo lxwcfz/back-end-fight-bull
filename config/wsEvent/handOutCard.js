@@ -21,6 +21,8 @@ module.exports = async function handOutCard(roomId, ws, server) {
 			data: member
 		}
 	});
+	const sql = `update ${db.roomTable} set member = '${JSON.stringify(member)}'`;
+	db.query(sql);
 }
 function getCard(currentList, totalList) {
 	const newCard = getRandomCardNumber(totalList);

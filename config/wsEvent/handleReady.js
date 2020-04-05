@@ -22,24 +22,25 @@ module.exports = async function handleReady(data, ws, server) {
 	// 获取房间信息
 	
 	if (member.every(item => item.ready)) {  // 所有人准备完毕
-		let sec = 3;
-		const timer = setInterval(() => {
-			// sendMsg(
-			// 	server,
-			// 	{  // 前台对应显示发牌倒计时
-			// 		type: WS_EVENT_TYPE.ready,
-			// 		data: {
-			// 			msg: sec > 0 ? sec : '洗牌中，准备发牌'
-			// 		}
-			// 	}
-			// );
-			if (sec == 0) {
-				clearInterval(timer);
-				// 发牌
-				handOutCard(roomId, ws, server);
-			}
-			sec -= 1;
-		}, 1000);
+		handOutCard(roomId, ws, server);
+		// let sec = 3;
+		// const timer = setInterval(() => {
+		// 	// sendMsg(
+		// 	// 	server,
+		// 	// 	{  // 前台对应显示发牌倒计时
+		// 	// 		type: WS_EVENT_TYPE.ready,
+		// 	// 		data: {
+		// 	// 			msg: sec > 0 ? sec : '洗牌中，准备发牌'
+		// 	// 		}
+		// 	// 	}
+		// 	// );
+		// 	if (sec == 0) {
+		// 		clearInterval(timer);
+		// 		// 发牌
+		// 		handOutCard(roomId, ws, server);
+		// 	}
+		// 	sec -= 1;
+		// }, 1000);
 	}
 
 };

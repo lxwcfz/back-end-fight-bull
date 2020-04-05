@@ -25,7 +25,9 @@ module.exports = async function handleOutRoom(data, ws, server) {
 				{
 					type: WS_EVENT_TYPE.outRoom,
 					data: {
-						data: list
+						data: {
+							outId: userInfo.id
+						}
 					}
 				}
 			)

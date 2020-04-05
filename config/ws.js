@@ -3,6 +3,9 @@ const handleReady = require('./wsEvent/handleReady');
 const handleIntoRoom = require('./wsEvent/handleIntoRoom');
 const handleDeleteRoom = require('./wsEvent/handleDeleteRoom');
 const handleOutRoom = require('./wsEvent/handleOutRoom');
+const handleGetHost = require('./wsEvent/handleGetHost');
+const handleFinish = require('./wsEvent/handleFinish');
+const handleAgain = require('./wsEvent/handleAgain');
 const { WS_EVENT_TYPE } = require('./data');
 const ws = require('nodejs-websocket');
 
@@ -22,7 +25,16 @@ const wsEventType = {
 	},
 	[WS_EVENT_TYPE.outRoom]: {
 		func: handleOutRoom
-	}
+	},
+	[WS_EVENT_TYPE.getHost]: {
+		func: handleGetHost
+	},
+	[WS_EVENT_TYPE.finish]: {
+		func: handleFinish
+	},
+	[WS_EVENT_TYPE.again]: {
+		func: handleAgain
+	},
 };
 function getWs() {
 	const server = ws.createServer(conn => {

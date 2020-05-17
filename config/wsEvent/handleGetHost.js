@@ -6,9 +6,9 @@ const { sendMsg } = require('../tool');
 module.exports = async function handleGetHost(data, ws, server) {
     const roomInfo = await getRoomInfoById(data.roomId);
     const userInfo = await getUserInfoByWs(ws);
-    console.log('get host', userInfo.name);
+    // console.log('get host', userInfo.name);
 	if (!roomInfo.host) {
-        console.log('got', userInfo.name);
+        // console.log('got', userInfo.name);
         const host = {
             id: userInfo.id,
             name: userInfo.name

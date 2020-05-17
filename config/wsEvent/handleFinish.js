@@ -24,7 +24,7 @@ module.exports = async function handleFinish(data, ws, server) {
             end = true;
             const sql2 = `update ${db.roomTable} set host = null where id = ${roomInfo.id}`;
             db.query(sql2);
-            console.log(roomInfo);
+            // console.log(roomInfo);
             const hostScore = member.filter(ware => ware.user.id == JSON.parse(roomInfo.host).id)[0].score;
             member.forEach(item => {
                 let add = 0;
@@ -50,7 +50,7 @@ module.exports = async function handleFinish(data, ws, server) {
                         add = -10;
                     }
                 }
-                console.log(item.user.name, add);
+                // console.log(item.user.name, add);
                 item.money = add;
                 const user = item.user;
                 user.score += add;

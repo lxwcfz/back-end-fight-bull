@@ -21,7 +21,7 @@ module.exports = async function handleReady(data, ws, server) {
 	);
 	// 获取房间信息
 	
-	if (member.every(item => item.ready)) {  // 所有人准备完毕
+	if (member.every(item => item.ready && !item.finish)) {  // 所有人准备完毕
 		handOutCard(roomId, ws, server);
 		// let sec = 3;
 		// const timer = setInterval(() => {

@@ -13,7 +13,7 @@ module.exports = async function handleOutRoom(data, ws, server) {
 		const list = [];
 		
 		member.forEach(element => {
-			console.log(element.user.id, userInfo.id);
+			// console.log(element.user.id, userInfo.id);
 			if (element.user.id !== userInfo.id) {
 				list.push(element);
 			}

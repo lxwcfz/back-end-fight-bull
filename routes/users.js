@@ -3,6 +3,7 @@ var router = express.Router();
 const db = require('../config/db');
 const deepClone = require('../config/deepClone.js');
 const JwtUtil = require('../config/jwt');
+const { getUserInfoByToken } = require('../config/info');
 /**
  * 登录->是否注册？->用户名是否重复？-> 密码是否正确？（暂存该条数据）->更新过期时间->返回个人信息状态3
  *          ↓no            ↓               ↓no         ↑            
@@ -47,21 +48,24 @@ function getUserFromTable(name) {
 }
 function doRegiste({ name, password }) {
 	return new Promise((resolve, rej) => {
-		const sql = `select count(*) as count from ${db.userTable}`;
-		db.query(sql).then(res => {
-			const id = res[0].count + 1;
-			const token = getToken(id);
-			const insert = `insert into ${db.userTable} (name, password, token) values('${name}', '${password}', '${token}')`;
-			db.query(insert).then(rows => {
-				// 注册成功
-				resolve({
-					name,
-					id,
-					score: 0,
-					token
+		const insert = `insert into ${db.userTable} (name, password) values('${name}', '${password}')`;
+		db.query(insert).then(rows => {
+			const sql2 = `select * from ${db.userTable} where name = '${name}'`;
+			db.query(sql2).then(res => {
+				const id = JSON.parse(JSON.stringify(res[0])).id;
+				const token = getToken(id);
+				const insert = `update ${db.userTable} set token = '${token}' where id = ${id}`;
+				db.query(insert).then(res => {
+					// 注册成功
+					resolve({
+						name,
+						id,
+						score: 0,
+						token
+					})
 				});
-			}).catch(err => rej(err));
-		}).catch(err => rej(err))
+			}).catch(err => console.log(err));
+		}).catch(err => rej(err));
 	})
 }
 function doLogin({ name, password }) {
@@ -99,6 +103,7 @@ router.post('/login', function (req, res, next) {
 					data.data = info;
 					res.json(data);
 				}).catch(err => {
+					console.log(err);
 					res.json(responseErr)
 				});
 			}
@@ -122,5 +127,17 @@ router.post('/login', function (req, res, next) {
 		})
 	}
 });
+
+router.post('/submitHead', async (req, res, next) => {
+	const userInfo = await getUserInfoByToken(req.headers.token);
+	const headName = req.body.name;
+	const sql = `update ${db.userTable} set img = '${headName}' where id = ${userInfo.id}`;
+	db.query(sql).then(data => {
+		res.json(responseInfo);
+	})
+})
+router.get('/expire', async (req, res, next) => {
+	res.json(responseInfo);
+})
 
 module.exports = router;

@@ -1,4 +1,11 @@
 const mysql = require('mysql');
+// const config = {
+//     host: '139.9.113.43',
+//     port: 3306,
+//     user: 'root',
+//     password: "wfyrgqgyy",
+//     database: 'douniu'
+// };
 const config = {
     host: 'localhost',
     port: 3306,
